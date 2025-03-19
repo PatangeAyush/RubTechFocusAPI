@@ -8,5 +8,6 @@ namespace RubTechFocus.DTO
 {
     public class TrialBallDTO
     {
+        public  int Ayush { get; set; }
     }
 }
