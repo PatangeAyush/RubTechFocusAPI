@@ -93,6 +93,7 @@
     <Compile Include="RegisterDTO.cs" />
     <Compile Include="ReportDTO.cs" />
     <Compile Include="TechnicalAbstractDTO.cs" />
+    <Compile Include="TrialBallDTO.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Models\" />
