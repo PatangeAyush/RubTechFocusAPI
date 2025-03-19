@@ -18,5 +18,7 @@ namespace RubTechFocus.DTO
         public string Author_Name { get; set; }
         public string Author_Description { get; set; }
         public string Abstract_Paragraph { get; set; }
+
+        public int TimePass { get; set; }
     }
 }
