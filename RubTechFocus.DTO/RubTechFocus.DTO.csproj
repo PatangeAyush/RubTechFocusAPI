@@ -88,6 +88,7 @@
     <Compile Include="MentorDTO.cs" />
     <Compile Include="MenuBarDTO.cs" />
     <Compile Include="MessegeDTO.cs" />
+    <Compile Include="NewsLetterDTO.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RegisterDTO.cs" />
     <Compile Include="ReportDTO.cs" />

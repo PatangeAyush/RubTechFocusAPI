@@ -12,5 +12,6 @@ namespace RubTechFocus.DTO
         public string Messege { get; set; }
         public int Id { get; set; }
         public string ImagePath { get; set; }
+        public string URL { get; set; }
     }
 }

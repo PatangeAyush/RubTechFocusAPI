@@ -82,11 +82,11 @@ namespace RubTechFocusAPI.Controllers
                     if (file != null && file.ContentLength > 0) // Ensure the file is valid
                     {
                         var uniqueName = $"{Guid.NewGuid()}{Path.GetExtension(file.FileName)}";
-                        imagePath = Path.Combine(Server.MapPath("~/Content/Uploads"), uniqueName);
+                        var relativePath = $"Content\\Uploads\\{uniqueName}"; // ✅ Double backslash format
+                        var fullPath = Server.MapPath("~/" + relativePath.Replace("\\", "/")); // ✅ Convert to valid server path
 
-                        // Ensure the file is saved properly
-                        file.InputStream.Position = 0;
-                        file.SaveAs(imagePath);
+                        file.SaveAs(fullPath); // Save file to server
+                        imagePath = relativePath; // ✅ Store only relative path (double backslash)
                     }
                 }
                 else
@@ -100,26 +100,22 @@ namespace RubTechFocusAPI.Controllers
                     ReportName = reportname,
                     ReportSubParagraph = ReportSubParagraph,
                     Report_Description = Report_Description,
-                    ReportImage = imagePath  // Store the image path in list (only one image)
+                    ReportImage = imagePath  // ✅ Stored as "Content\\Uploads\\filename.jpg"
                 };
 
-                // Call AddReport method in the BAL layer
                 var data = objreportBAL.AddReport(eventDTO);
 
-                // Return the success response
                 return Json(new { Code = 200, Message = "Report Added Successfully", Data = data }, JsonRequestBehavior.AllowGet);
             }
             catch (Exception ex)
             {
-                // Log exception and throw
                 Exception = ex.ToString();
                 throw;
             }
             finally
             {
-                // Log the request and response (for auditing/debugging)
                 RequestResponseLog res = new RequestResponseLog();
-                res.RequestResponseLogs("Method Name: AddResult", "Class Name: GalleryReportBAL", Request1, Response, Exception);
+                res.RequestResponseLogs("Method Name: AddReport", "Class Name: GalleryReportBAL", Request1, Response, Exception);
             }
         }
 
@@ -133,7 +129,7 @@ namespace RubTechFocusAPI.Controllers
                 var ReportSubParagraph = httpRequest["ReportSubParagraph"];
                 var Report_Description = httpRequest["Report_Description"];
                 var oldImagePath = httpRequest["OldImage"];
-                string newImagePath = oldImagePath;
+                string newImagePath = oldImagePath; // Default to old image
 
                 if (string.IsNullOrEmpty(reportname))
                 {
@@ -147,10 +143,11 @@ namespace RubTechFocusAPI.Controllers
                     if (file != null && file.ContentLength > 0)
                     {
                         var uniqueName = $"{Guid.NewGuid()}{Path.GetExtension(file.FileName)}";
-                        newImagePath = Path.Combine(Server.MapPath("~/Content/Uploads"), uniqueName);
+                        var relativePath = $"Content\\Uploads\\{uniqueName}"; // ✅ Double backslash format
+                        var fullPath = Server.MapPath("~/" + relativePath.Replace("\\", "/")); // ✅ Convert to valid server path
 
-                        file.InputStream.Position = 0;
-                        file.SaveAs(newImagePath);
+                        file.SaveAs(fullPath); // Save new image
+                        newImagePath = relativePath; // ✅ Store only relative path
                     }
                 }
 
@@ -160,7 +157,7 @@ namespace RubTechFocusAPI.Controllers
                     ReportName = reportname,
                     ReportSubParagraph = ReportSubParagraph,
                     Report_Description = Report_Description,
-                    ReportImage = newImagePath
+                    ReportImage = newImagePath // ✅ Stored as "Content\\Uploads\\filename.jpg"
                 };
 
                 var data = objreportBAL.UpdateReport(reportDTO);

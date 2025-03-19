@@ -227,7 +227,7 @@ namespace RubTechFocus.DAL
             return add;
         }
 
-        public void AddReportSingleImage(int id, string ImagePath)
+        public void AddReportSingleImage(int id, string imagePath)
         {
             try
             {
@@ -235,7 +235,7 @@ namespace RubTechFocus.DAL
                 {
                     db.AddInParameter(command, "@action", DbType.String, "AddReportImage");
                     db.AddInParameter(command, "@Id", DbType.Int32, id);
-                    db.AddInParameter(command, "@ImagePath", DbType.String, ImagePath);
+                    db.AddInParameter(command, "@ImagePath", DbType.String, imagePath);
                     //db.AddInParameter(command, "@BigImagePath", DbType.String, BigImagePath);
                     db.ExecuteNonQuery(command);
                 }

@@ -220,19 +220,19 @@ namespace RubTechFocus.DAL
             return objEventDTO;
         }
 
-        public void UpdateEvent(EventDTO.EventsEntity update)
+        public void UpdateEvent(EventDTO.EventsEntity eventDTO)
         {
             try
             {
                 using (DbCommand command = db.GetStoredProcCommand("SP_Events"))
                 {
                     db.AddInParameter(command, "@action", DbType.String, "UpdateEvent");
-                    db.AddInParameter(command, "@Id", DbType.Int32, update.ID);
-                    db.AddInParameter(command, "@EventTitle", DbType.String, update.EventTitle);
-                    db.AddInParameter(command, "@SubTitle", DbType.String, update.SubTitle);
-                    db.AddInParameter(command, "@Paragraph", DbType.String, update.Paragraph);
-                    db.AddInParameter(command, "@EventImageId", DbType.String, update.EventImageId);
-                    db.AddInParameter(command, "@ImagePath", DbType.String, update.Imagepath);
+                    db.AddInParameter(command, "@Id", DbType.Int32, eventDTO.ID);
+                    db.AddInParameter(command, "@EventTitle", DbType.String, eventDTO.EventTitle);
+                    db.AddInParameter(command, "@SubTitle", DbType.String, eventDTO.SubTitle);
+                    db.AddInParameter(command, "@Paragraph", DbType.String, eventDTO.Paragraph);
+                    db.AddInParameter(command, "@EventImageId", DbType.String, eventDTO.EventImageId);
+                    db.AddInParameter(command, "@ImagePath", DbType.String, eventDTO.Imagepath);
 
                     db.ExecuteNonQuery(command);
                 }

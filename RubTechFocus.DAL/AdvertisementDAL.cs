@@ -27,7 +27,8 @@ namespace RubTechFocus.DAL
                     advertisingsList.Add(new AdvertisingDTO() { 
 
                         Id = Convert.ToInt16(reader["ID"]),
-                        ImagePath = reader["ImagePath"].ToString()
+                        ImagePath = reader["ImagePath"].ToString(),
+                        URL = reader["URL"].ToString()
                     });
                 }
                 return advertisingsList;
@@ -42,6 +43,7 @@ namespace RubTechFocus.DAL
                 {
                     db.AddInParameter(command, "@action", DbType.String, "AddAdvertisement");
                     db.AddInParameter(command, "@imagepath", DbType.String, add.ImagePath);
+                    db.AddInParameter(command, "@URL", DbType.String, add.URL);
 
                     db.ExecuteNonQuery(command);
                 }

@@ -64,54 +64,54 @@ namespace RubTechFocusAPI.Controllers
             try
             {
                 var httpRequest = HttpContext.Request;
-
                 var eventTitle = httpRequest["Title"];
 
                 if (string.IsNullOrEmpty(eventTitle))
                 {
-                    return Json(new { Code = 400, Messege = "Event Title is required" }, JsonRequestBehavior.AllowGet);
+                    return Json(new { Code = 400, Message = "Event Title is required" }, JsonRequestBehavior.AllowGet);
                 }
 
                 List<string> imagePaths = new List<string>();
 
                 if (httpRequest.Files.Count > 0)
                 {
-                    //foreach (string fileKey in httpRequest.Files)
                     for (int i = 0; i < httpRequest.Files.Count; i++)
                     {
                         var file = httpRequest.Files[i];
-                        var uniquename = $"{Guid.NewGuid()}{Path.GetExtension(file.FileName)}";
-                        var filePath = Path.Combine(Server.MapPath("~/Content/Uploads"), uniquename);
 
-                        file.SaveAs(filePath);
+                        if (file != null && file.ContentLength > 0)
+                        {
+                            var uniqueName = $"{Guid.NewGuid()}{Path.GetExtension(file.FileName)}";
+                            var relativePath = Path.Combine("Content/Uploads", uniqueName); // ✅ Relative Path
+                            var fullPath = Server.MapPath("~/" + relativePath); // Absolute path for saving only
 
-                        imagePaths.Add(filePath);
+                            file.SaveAs(fullPath); // Save File
+                            imagePaths.Add(relativePath); // ✅ Store only relative path (Fixed slashes)
+                        }
                     }
                 }
                 else
                 {
                     return Json(new { Code = 400, Message = "No images uploaded" }, JsonRequestBehavior.AllowGet);
                 }
+
                 Request1 = JsonConvert.SerializeObject(add);
 
                 GalleryEventDTO eventDTO = new GalleryEventDTO
                 {
-
                     Title = eventTitle,
                     ImagePaths = imagePaths,
-                    
                 };
 
                 var result = galEventBalObj.AddEvent(eventDTO);
-
                 Request1 = JsonConvert.SerializeObject(result);
-
 
                 return Json(result);
             }
             catch (Exception ex)
             {
-                Exception = ex.ToString(); throw;
+                Exception = ex.ToString();
+                throw;
             }
             finally
             {
@@ -225,9 +225,11 @@ namespace RubTechFocusAPI.Controllers
                     if (imageFile != null && imageFile.ContentLength > 0)
                     {
                         var uniqueImageName = $"{Guid.NewGuid()}{Path.GetExtension(imageFile.FileName)}";
-                        var imagePath = Path.Combine(Server.MapPath("~/Content/Uploads"), uniqueImageName);
-                        imageFile.SaveAs(imagePath);
-                        ImagePath = imagePath; // Update ImagePath variable to new saved path
+                        var relativePath = Path.Combine("Content/Uploads", uniqueImageName); // ✅ Relative Path
+                        var fullPath = Server.MapPath("~/" + relativePath); // Absolute path for saving only
+
+                        imageFile.SaveAs(fullPath); // Save File
+                        ImagePath = relativePath; // ✅ Store only relative path (Fixed slashes)
                     }
                 }
 

@@ -76,8 +76,10 @@ namespace RubTechFocusAPI.Controllers
                     return Json(new { Code = 400, Message = "No images uploaded" }, JsonRequestBehavior.AllowGet);
                 }
 
-                AdvertisingDTO advertisingDTO = new AdvertisingDTO() { 
-                    ImagePath = filePath
+                AdvertisingDTO advertisingDTO = new AdvertisingDTO()
+                {
+                    ImagePath = filePath,
+                    URL = add.URL
                 };
 
                 var data = objadvertisingBAL.AddAdvertisement(advertisingDTO);

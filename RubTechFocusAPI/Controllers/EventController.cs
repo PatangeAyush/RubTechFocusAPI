@@ -59,6 +59,7 @@ namespace RubTechFocusAPI.Controllers
                 res.RequestResponseLogs("Method Name: GetEvents", "Class Name: EventBAL", Request1, Response, Exception);
             }
         }
+            
         //public JsonResult AddEvent(EventDTO.EventsEntity add)
         //{
         //    try
@@ -131,10 +132,11 @@ namespace RubTechFocusAPI.Controllers
                     {
                         var file = httpRequest.Files[i];
                         var uniqueName = $"{Guid.NewGuid()}{Path.GetExtension(file.FileName)}";
-                        var filePath = Path.Combine(Server.MapPath("~/Content/Uploads"), uniqueName);
+                        var relativePath = Path.Combine("Content/Uploads", uniqueName); // Relative Path
+                        var fullPath = Path.Combine(Server.MapPath("~/" + relativePath)); // Absolute Path
 
-                        file.SaveAs(filePath);
-                        imagePaths.Add(filePath);
+                        file.SaveAs(fullPath); // Save File
+                        imagePaths.Add(relativePath);  // ✅ Only store relative path
                     }
                 }
                 // If request is coming from Raw JSON
@@ -142,18 +144,18 @@ namespace RubTechFocusAPI.Controllers
                 {
                     foreach (var imagePath in add.ImagePaths)
                     {
-                        // Generate a unique name for each image
-                        var extension = Path.GetExtension(imagePath) ?? ".jpg"; // Default to .jpg if extension is missing
+                        var extension = Path.GetExtension(imagePath) ?? ".jpg";
                         var uniqueName = $"{Guid.NewGuid()}{extension}";
-                        var newFilePath = Path.Combine(Server.MapPath("~/Content/Uploads"), uniqueName);
+                        var relativePath = $"Content/Uploads/{uniqueName}";  // ✅ Relative path
 
-                        // Copy the image to the new location (assuming the imagePath is a valid local path)
+                        var absolutePath = Server.MapPath("~/" + relativePath);
+
                         if (System.IO.File.Exists(imagePath))
                         {
-                            System.IO.File.Copy(imagePath, newFilePath, true);
+                            System.IO.File.Copy(imagePath, absolutePath, true);
                         }
 
-                        imagePaths.Add(newFilePath);
+                        imagePaths.Add(relativePath);  // ✅ Only store relative path
                     }
                 }
 
@@ -193,39 +195,35 @@ namespace RubTechFocusAPI.Controllers
                 var EventImageId = Convert.ToInt16(httpRequest["EventImageId"]);
 
                 var uniquename = "";
-                var filePath = "";
+                var relativePath = "";
                 if (httpRequest.Files.Count > 0)
                 {
-                    //for (int i = 0; i < httpRequest.Files.Count; i++)  // Ensure correct iteration
-                    //{
                     var file = httpRequest.Files[0];
 
                     if (file != null && file.ContentLength > 0) // Ensure valid file
                     {
                         uniquename = $"{Guid.NewGuid()}{Path.GetExtension(file.FileName)}";
-                        filePath = Path.Combine(Server.MapPath("~/Content/Uploads"), uniquename);
+                        relativePath = $"~/Content/Uploads/{uniquename}";  // Store relative path
+                        var absolutePath = Server.MapPath(relativePath); // Convert to absolute path for saving
 
                         // Ensure the file is saved properly
                         file.InputStream.Position = 0;
-                        file.SaveAs(filePath);
-
-                        /*imagePaths.Add(filePath); */ // Store relative path
+                        file.SaveAs(absolutePath);
                     }
-                    // }
                 }
 
                 EventDTO.EventsEntity eventDTO = new EventDTO.EventsEntity
                 {
-                    ID= ID,
+                    ID = ID,
                     EventTitle = EventTitle,
                     SubTitle = SubTitle,
                     Paragraph = Paragraph,
                     EventImageId = EventImageId,
-                    Imagepath = filePath
-
+                    Imagepath = relativePath // Storing relative path
                 };
+
                 objeventBAL.UpdateEvent(eventDTO);
-                return Json(new { Code = 200, Messege = "Updated Successfully" }, JsonRequestBehavior.AllowGet);
+                return Json(new { Code = 200, Message = "Updated Successfully" }, JsonRequestBehavior.AllowGet);
             }
             catch (Exception ex)
             {

@@ -14,5 +14,7 @@ namespace RubTechFocus.DTO
         public string MenuName { get; set; }
         public int SubMenuID { get; set; }
         public string SubMenu { get; set; }
+        public string MenuURL { get; set; }
+        public string SubMenuURL { get; set; }
     }
 }

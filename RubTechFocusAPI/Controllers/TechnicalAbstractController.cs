@@ -42,14 +42,13 @@ namespace RubTechFocusAPI.Controllers
 
         public JsonResult AddTechnicalAbstract()
         {
-            
             try
             {
                 var httpRequest = HttpContext.Request;
                 var name = httpRequest["Name"];
                 var Authorname = httpRequest["Author_Name"];
                 var AuthorDescription = httpRequest["Author_Description"];
-                var AbstractParagraph = httpRequest["Abstract_Paragraph"]; 
+                var AbstractParagraph = httpRequest["Abstract_Paragraph"];
 
                 if (string.IsNullOrEmpty(name))
                 {
@@ -63,10 +62,16 @@ namespace RubTechFocusAPI.Controllers
                     foreach (string fileKey in httpRequest.Files)
                     {
                         var file = httpRequest.Files[fileKey];
-                        var uniqueName = $"{Guid.NewGuid()}{Path.GetExtension(file.FileName)}";
-                        var filePath = Path.Combine(HttpContext.Server.MapPath("~/Content/Uploads"), uniqueName);
-                        file.SaveAs(filePath);
-                        imagePaths.Add(filePath);
+
+                        if (file != null && file.ContentLength > 0)
+                        {
+                            var uniqueName = $"{Guid.NewGuid()}{Path.GetExtension(file.FileName)}";
+                            var relativePath = $"Content\\Uploads\\{uniqueName}"; // ✅ Double backslash format
+                            var fullPath = Server.MapPath("~/" + relativePath.Replace("\\", "/")); // ✅ Convert to valid server path
+
+                            file.SaveAs(fullPath); // Save file to server
+                            imagePaths.Add(relativePath); // ✅ Store only relative path
+                        }
                     }
                 }
                 else
@@ -82,7 +87,6 @@ namespace RubTechFocusAPI.Controllers
                     Author_Name = Authorname,
                     Author_Description = AuthorDescription,
                     Abstract_Paragraph = AbstractParagraph,
-                   
                 };
 
                 var result = objTechnicalAbstractBAL.AddTechnicalAbstract(dto);
@@ -102,7 +106,7 @@ namespace RubTechFocusAPI.Controllers
             }
         }
 
-        
+
 
         public JsonResult UpdateTechnicalAbstract(TechnicalAbstractDTO model)
         {
@@ -110,7 +114,6 @@ namespace RubTechFocusAPI.Controllers
             {
                 var httpRequest = HttpContext.Request;
 
-                // Request se parameter values lena
                 if (string.IsNullOrEmpty(model.Name))
                 {
                     return Json(new { Code = 400, Message = "Abstract Name is required" }, JsonRequestBehavior.AllowGet);
@@ -118,20 +121,20 @@ namespace RubTechFocusAPI.Controllers
 
                 List<string> imagePaths = new List<string>();
 
-                // Use Request.Files to handle file uploads
                 if (httpRequest.Files.Count > 0)
                 {
-                    foreach (string fileKey in Request.Files)
+                    foreach (string fileKey in httpRequest.Files)
                     {
-                        var file = Request.Files[fileKey];
+                        var file = httpRequest.Files[fileKey];
 
-                        // Check if the file exists and is not empty
                         if (file != null && file.ContentLength > 0)
                         {
                             var uniqueName = $"{Guid.NewGuid()}{Path.GetExtension(file.FileName)}";
-                            var filePath = Path.Combine(Server.MapPath("~/Content/Uploads"), uniqueName);
-                            file.SaveAs(filePath);
-                            imagePaths.Add(filePath);
+                            var relativePath = $"Content\\Uploads\\{uniqueName}"; // ✅ Double backslash format
+                            var fullPath = Server.MapPath("~/" + relativePath.Replace("\\", "/")); // ✅ Convert to valid server path
+
+                            file.SaveAs(fullPath); // Save new image
+                            imagePaths.Add(relativePath); // ✅ Store only relative path
                         }
                     }
                 }
@@ -140,7 +143,6 @@ namespace RubTechFocusAPI.Controllers
                 model.Absract_ImagePath = imagePaths.Count > 0 ? imagePaths[0] : model.Absract_ImagePath;  // First image for Abstract
                 model.Author_ImagePath = imagePaths.Count > 1 ? imagePaths[1] : model.Author_ImagePath;
 
-                // Call the business logic layer to update the abstract
                 var result = objTechnicalAbstractBAL.UpdateTechnicalAbstract(model);
 
                 return Json(result, JsonRequestBehavior.AllowGet);
@@ -150,6 +152,9 @@ namespace RubTechFocusAPI.Controllers
                 return Json(new { Code = 500, Message = "Internal Server Error", Error = ex.Message }, JsonRequestBehavior.AllowGet);
             }
         }
+
+
+
         //public JsonResult UpdateTechnicalAbstract(TechnicalAbstractDTO model)
         //{
         //    try

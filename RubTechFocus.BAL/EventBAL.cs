@@ -25,9 +25,9 @@ namespace RubTechFocus.BAL
             return eventDAL.AddEvent(add,imagePaths);
         }
 
-        public void UpdateEvent(EventDTO.EventsEntity update)
+        public void UpdateEvent(EventDTO.EventsEntity eventDTO)
         {
-            eventDAL.UpdateEvent(update);
+            eventDAL.UpdateEvent(eventDTO);
         }
 
         public void DeleteEvent(int id)

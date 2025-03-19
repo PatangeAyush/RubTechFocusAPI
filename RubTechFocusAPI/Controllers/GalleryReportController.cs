@@ -110,27 +110,25 @@ namespace RubTechFocusAPI.Controllers
 
                 if (string.IsNullOrEmpty(reportname))
                 {
-                    return Json(new { Code = 400, Message = "Event Title is required" }, JsonRequestBehavior.AllowGet);
+                    return Json(new { Code = 400, Message = "Report Name is required" }, JsonRequestBehavior.AllowGet);
                 }
 
                 List<string> imagePaths = new List<string>();
 
                 if (httpRequest.Files.Count > 0)
                 {
-                    for (int i = 0; i < httpRequest.Files.Count; i++)  // Ensure correct iteration
+                    for (int i = 0; i < httpRequest.Files.Count; i++) // Loop through uploaded files
                     {
                         var file = httpRequest.Files[i];
 
                         if (file != null && file.ContentLength > 0) // Ensure valid file
                         {
-                            var uniquename = $"{Guid.NewGuid()}{Path.GetExtension(file.FileName)}";
-                            var filePath = Path.Combine(Server.MapPath("~/Content/Uploads"), uniquename);
+                            var uniqueName = $"{Guid.NewGuid()}{Path.GetExtension(file.FileName)}";
+                            var relativePath = Path.Combine("Content", "Uploads", uniqueName); // ✅ Relative Path
+                            var fullPath = Server.MapPath("~/" + relativePath); // Absolute Path for saving only
 
-                            // Ensure the file is saved properly
-                            file.InputStream.Position = 0;
-                            file.SaveAs(filePath);
-
-                            imagePaths.Add(filePath);  // Store relative path
+                            file.SaveAs(fullPath); // Save file
+                            imagePaths.Add(relativePath); // ✅ Store relative path (No absolute path)
                         }
                     }
                 }
@@ -164,33 +162,32 @@ namespace RubTechFocusAPI.Controllers
 
         public JsonResult AddGalleryReportSingleImage(int id, string imagePath)
         {
-            try 
+            try
             {
                 var httpRequest = HttpContext.Request;
-                var uniquename= "";
-                var filePath = "";
+                var uniquename = "";
+                var relativePath = ""; // ✅ Store relative path only
+
                 if (httpRequest.Files.Count > 0)
                 {
-                    //for (int i = 0; i < httpRequest.Files.Count; i++)  // Ensure correct iteration
-                    //{
-                        var file = httpRequest.Files[0];
+                    var file = httpRequest.Files[0];
 
-                        if (file != null && file.ContentLength > 0) // Ensure valid file
-                        {
-                             uniquename = $"{Guid.NewGuid()}{Path.GetExtension(file.FileName)}";
-                             filePath = Path.Combine(Server.MapPath("~/Content/Uploads"), uniquename);
+                    if (file != null && file.ContentLength > 0) // Ensure valid file
+                    {
+                        uniquename = $"{Guid.NewGuid()}{Path.GetExtension(file.FileName)}";
+                        relativePath = Path.Combine("Content", "Uploads", uniquename); // ✅ Relative Path
+                        var fullPath = Server.MapPath("~/" + relativePath); // Absolute Path for saving only
 
-                            // Ensure the file is saved properly
-                            file.InputStream.Position = 0;
-                            file.SaveAs(filePath);
+                        file.SaveAs(fullPath); // Save file to server
 
-                            /*imagePaths.Add(filePath); */ // Store relative path
-                        }
-                   // }
+                        // ✅ Now, store only relative path
+                        imagePath = relativePath;
+                    }
                 }
 
-                    objgalleryreporttBAL.AddReportSingleImage(id, filePath);
-                return Json(new { Code = 200, Messege = "Gallery Report Image Added Successfully" }, JsonRequestBehavior.AllowGet);
+                objgalleryreporttBAL.AddReportSingleImage(id, imagePath);
+
+                return Json(new { Code = 200, Message = "Gallery Report Image Added Successfully" }, JsonRequestBehavior.AllowGet);
             }
             catch (Exception ex)
             {
@@ -200,9 +197,10 @@ namespace RubTechFocusAPI.Controllers
             finally
             {
                 RequestResponseLog res = new RequestResponseLog();
-                res.RequestResponseLogs("Method Name: AddGalleryReport", "Class Name: GalleryReportBAL", Request1, Response, Exception);
+                res.RequestResponseLogs("Method Name: AddGalleryReportSingleImage", "Class Name: GalleryReportBAL", Request1, Response, Exception);
             }
         }
+
         public JsonResult RenameGalleryReport(int Id, string reportName)
         {
             try 

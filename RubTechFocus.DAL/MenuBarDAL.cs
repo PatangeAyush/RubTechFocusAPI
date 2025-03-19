@@ -13,6 +13,7 @@ namespace RubTechFocus.DAL
     {
         MenuBarDTO response = new MenuBarDTO();
 
+        string Exceptions = null;
         public List<MenuBarDTO> GetMenuBar()
         {
             try
@@ -30,8 +31,10 @@ namespace RubTechFocus.DAL
                         {
                             MenuID = Convert.ToInt32(reader["MenuID"]),
                             MenuName = reader["Menu_Name"].ToString(),
+                            MenuURL = reader["MenuURL"].ToString(),
                             SubMenuID = reader["SubMenuID"] != DBNull.Value ? Convert.ToInt32(reader["SubMenuID"]) : 0,
-                            SubMenu = reader["Sub_Menu"].ToString()
+                            SubMenu = reader["Sub_Menu"].ToString(),
+                            SubMenuURL = reader["SubMenuURL"].ToString()
                         });
                     }
                     return menuList;
@@ -39,7 +42,8 @@ namespace RubTechFocus.DAL
             }
             catch (Exception ex)
             {
-                throw;
+                Exceptions = ex.Message;
+                throw ;
             }
         }
 
@@ -49,6 +53,7 @@ namespace RubTechFocus.DAL
             {
                 db.AddInParameter(command, "@action", DbType.String, "AddMenuBar");
                 db.AddInParameter(command, "@name", DbType.String, menu.MenuName);
+                db.AddInParameter(command, "@MenuURL", DbType.String, menu.MenuURL);
                 db.ExecuteNonQuery(command);
             }
         }
@@ -60,6 +65,7 @@ namespace RubTechFocus.DAL
                 db.AddInParameter(command, "@action", DbType.String, "AddSubMenubar");
                 db.AddInParameter(command, "@MenuID", DbType.Int32, menu.MenuID);
                 db.AddInParameter(command, "@submenu", DbType.String, menu.SubMenu);
+                db.AddInParameter(command, "@SubMenuURL", DbType.String, menu.SubMenuURL);
                 db.ExecuteNonQuery(command);
             }
         }
@@ -70,9 +76,12 @@ namespace RubTechFocus.DAL
             {
                 db.AddInParameter(command, "@action", DbType.String, "UpdateMenuBar");
                 db.AddInParameter(command, "@MenuID", DbType.Int32, menu.MenuID);
+                db.AddInParameter(command, "@MenuURL", DbType.String, string.IsNullOrEmpty(menu.MenuURL) ? (object)DBNull.Value: menu.MenuURL);
+
                 db.AddInParameter(command, "@SubMenuID", DbType.Int32, menu.SubMenuID == 0 ? (object)DBNull.Value : menu.SubMenuID);
                 db.AddInParameter(command, "@name", DbType.String, string.IsNullOrEmpty(menu.MenuName) ? (object)DBNull.Value : menu.MenuName);
                 db.AddInParameter(command, "@submenu", DbType.String, string.IsNullOrEmpty(menu.SubMenu) ? (object)DBNull.Value : menu.SubMenu);
+                db.AddInParameter(command, "@SubMenuURL", DbType.String, string.IsNullOrEmpty(menu.SubMenu) ?(object)DBNull.Value: menu.SubMenuURL);
 
                 db.ExecuteNonQuery(command);
             }

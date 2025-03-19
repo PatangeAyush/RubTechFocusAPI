@@ -190,6 +190,7 @@
     <Compile Include="Controllers\MentorController.cs" />
     <Compile Include="Controllers\MenuBarController.cs" />
     <Compile Include="Controllers\MessegeController.cs" />
+    <Compile Include="Controllers\NewsLetterController.cs" />
     <Compile Include="Controllers\RegisterController.cs" />
     <Compile Include="Controllers\ReportController.cs" />
     <Compile Include="Controllers\TechnicalAbstractController.cs" />
@@ -283,6 +284,7 @@
     <Folder Include="Views\Mentor\" />
     <Folder Include="Views\MenuBar\" />
     <Folder Include="Views\Messege\" />
+    <Folder Include="Views\NewsLetter\" />
     <Folder Include="Views\Register\" />
     <Folder Include="Views\Report\" />
     <Folder Include="Views\TechnicalAbstract\" />

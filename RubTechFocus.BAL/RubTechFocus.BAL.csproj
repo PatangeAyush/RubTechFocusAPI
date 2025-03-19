@@ -89,6 +89,7 @@
     <Compile Include="MentorBAL.cs" />
     <Compile Include="MenuBarBAL.cs" />
     <Compile Include="MessegeBAL.cs" />
+    <Compile Include="NewsLetterBAL.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RegisterBAL.cs" />
     <Compile Include="ReportBAL.cs" />

@@ -21,9 +21,9 @@ namespace RubTechFocus.BAL
         {
             return objgalleryreportDAL.AddGalleryReport(add);
         }
-        public void AddReportSingleImage(int id, string ImagePath)
+        public void AddReportSingleImage(int id, string imagePath)
         {
-            objgalleryreportDAL.AddReportSingleImage(id, ImagePath);
+            objgalleryreportDAL.AddReportSingleImage(id, imagePath);
         }
         public void RenameReport(int id, string reportName)
         {
